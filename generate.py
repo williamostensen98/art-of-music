@@ -286,6 +286,22 @@ def zs_to_ws(G,device,label,truncation_psi,zs):
         ws.append(w)
     return ws
 
+def generateFromCategoryDist(G, dist, seeds, truncation, noise_mode, outdir, device=torch.device('cuda'), conditional_truncation=False):
+  assert len(dist) == G.c_dim, "Distribution must be equal to the conditonal dimansion"
+  l_ndarray = np.array(dist)
+  # make sure our output directory exists
+  os.makedirs(outdir, exist_ok=True)
+
+  label = torch.as_tensor([l_ndarray], device=device)
+  for seed in seeds:
+    z = np.random.RandomState(seed).randn(1, G.z_dim)
+    z = torch.from_numpy(z).to(device) 
+    img = G(z, label, truncation_psi=truncation, noise_mode=noise_mode, conditional_truncation=conditional_truncation)
+    #print(img)
+    img = (img.permute(0, 2, 3, 1) * 127.5 + 128).clamp(0, 255).to(torch.uint8)
+    #print(img)
+    PIL.Image.fromarray(img[0].cpu().numpy(), 'RGB').save(f'{outdir}/seed{seed:04d}_class_dist.png')
+
 #----------------------------------------------------------------------------
 
 @click.command()
@@ -317,6 +333,8 @@ def zs_to_ws(G,device,label,truncation_psi,zs):
 @click.option('--start', type=float, help='starting truncation value', default=0.0, show_default=True)
 @click.option('--stop', type=float, help='stopping truncation value', default=1.0, show_default=True)
 @click.option('--trunc', 'truncation_psi', type=float, help='Truncation psi', default=1, show_default=True)
+@click.option('--cond-trunc', 'conditional_truncation', type=bool, help='Truncation psi', default=False, show_default=True)
+@click.option('--dist', type=list, help='List of categories')
 
 def generate_images(
     ctx: click.Context,
@@ -334,12 +352,14 @@ def generate_images(
     fps: Optional[int],
     frames: Optional[int],
     truncation_psi: float,
+    conditional_truncation: bool,
     noise_mode: str,
     outdir: str,
     class_idx: Optional[int],
     projected_w: Optional[str],
     start: Optional[float],
     stop: Optional[float],
+    dist: Optional[List[float]],
 ):
     """Generate images using pretrained network pickle.
 
@@ -422,6 +442,7 @@ def generate_images(
             img = (img.permute(0, 2, 3, 1) * 127.5 + 128).clamp(0, 255).to(torch.uint8)
             img = PIL.Image.fromarray(img[0].cpu().numpy(), 'RGB').save(f'{outdir}/proj{idx:02d}.png')
         return
+        
 
     # Labels.
     label = torch.zeros([1, G.c_dim], device=device)
@@ -439,10 +460,13 @@ def generate_images(
             ctx.fail('--seeds option is required when not using --projected-w')
 
         # Generate images.
+        if dist != None:
+            generateFromCategoryDist(G, dist, seeds, truncation_psi, noise_mode, outdir, conditional_truncation=conditional_truncation)
+
         for seed_idx, seed in enumerate(seeds):
             print('Generating image for seed %d (%d/%d) ...' % (seed, seed_idx, len(seeds)))
             z = torch.from_numpy(np.random.RandomState(seed).randn(1, G.z_dim)).to(device)
-            img = G(z, label, truncation_psi=truncation_psi, noise_mode=noise_mode)
+            img = G(z, label, truncation_psi=truncation_psi, noise_mode=noise_mode, conditional_truncation=conditional_truncation)
             img = (img.permute(0, 2, 3, 1) * 127.5 + 128).clamp(0, 255).to(torch.uint8)
             PIL.Image.fromarray(img[0].cpu().numpy(), 'RGB').save(f'{outdir}/seed{seed:04d}.png')
 
