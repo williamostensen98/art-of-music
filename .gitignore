@@ -1,0 +1,10 @@
+__pycache__/
+.cache/
+fakes/
+data/
+output/
+*.slurm
+*.pkl
+.DS_Store
+*.ipynb
+*.jpg
