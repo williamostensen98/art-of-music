@@ -1,3 +1,6 @@
+Original repo from https://github.com/dvschultz/stylegan2-ada-pytorch
+Conditional interpolation code collected and reused from https://github.com/autonomousvision/stylegan-xl
+
 ## Add to Colab
 
 ### StyleGAN2-ADA PyTorch (Start Here)
