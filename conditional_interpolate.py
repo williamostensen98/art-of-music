@@ -253,9 +253,11 @@ def generate_images(
     seeds = [seed]*len(category_list)
     output = f'/{outdir}/seed{seed:04d}_video.mp4'
 
-    gen_interp_video(G=G, mp4=output, bitrate='15M', seeds=seeds, shuffle_seed=False, w_frames=30, class_idx=category_list)
+    print("Generating interpolation video")
+    gen_interp_video(G=G, mp4=output, bitrate='15M', seeds=seeds, shuffle_seed=False, w_frames=30, truncation_psi=truncation_psi, class_idx=category_list)
 
     if audio_path:
+        print("Combining audio and video")
         mp4_filename = f'/{outdir}/combined.mp4'
         video_clip = moviepy.editor.VideoFileClip(output)
         audio_clip_i = moviepy.editor.AudioFileClip(audio_path)
