@@ -108,7 +108,7 @@ def layout_grid(img, grid_w=None, grid_h=1, float_to_uint8=True, chw_to_hwc=True
     return img
 
 
-def gen_interp_video(G, mp4: str, seeds, shuffle_seed=None, w_frames=60*4, kind='cubic', grid_dims=(1,1), num_keyframes=None, wraps=2, truncation_psi=1, noise_mode='const', conditional_truncation=False, device=torch.device('cuda'), centroids_path=None, class_idx=None, **video_kwargs):
+def gen_interp_video(G, mp4: str, seeds, shuffle_seed=None, w_frames=30, kind='cubic', grid_dims=(1,1), num_keyframes=None, wraps=2, truncation_psi=1, noise_mode='const', conditional_truncation=False, device=torch.device('cuda'), centroids_path=None, class_idx=None, **video_kwargs):
     grid_w = grid_dims[0]
     grid_h = grid_dims[1]
 
@@ -254,7 +254,7 @@ def generate_images(
     output = f'/{outdir}/seed{seed:04d}_video.mp4'
 
     print("Generating interpolation video")
-    gen_interp_video(G=G, mp4=output, bitrate='15M', seeds=seeds, shuffle_seed=False, w_frames=30, truncation_psi=truncation_psi, class_idx=category_list)
+    gen_interp_video(G=G, mp4=output, bitrate='15M', seeds=seeds, shuffle_seed=False, w_frames=frames, truncation_psi=truncation_psi, noise_mode=noise_mode, class_idx=category_list)
 
     if audio_path:
         print("Combining audio and video")
