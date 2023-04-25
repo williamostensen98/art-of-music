@@ -196,6 +196,7 @@ def convert_tf_generator(tf_G, custom=False, **ex_kwargs):
     kwarg('truncation_cutoff')
     kwarg('style_mixing_prob')
     kwarg('structure')
+    kwarg('conditional_truncation')
     unknown_kwargs = list(set(tf_kwargs.keys()) - known_kwargs)
 # !!! custom
     if custom:
