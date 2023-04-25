@@ -406,9 +406,9 @@ class Generator(torch.nn.Module):
 
 # !!! custom
     # def forward(self, z, c, latmask, dconst, truncation_psi=1, truncation_cutoff=None, **synthesis_kwargs):
-    def forward(self, z, c, truncation_psi=1, truncation_cutoff=None, **synthesis_kwargs):
+    def forward(self, z, c, truncation_psi=1, truncation_cutoff=None, conditional_truncation=False, **synthesis_kwargs):
     # def forward(self, z, c, truncation_psi=1, truncation_cutoff=None, **synthesis_kwargs):
-        ws = self.mapping(z, c, truncation_psi=truncation_psi, truncation_cutoff=truncation_cutoff)
+        ws = self.mapping(z, c, truncation_psi=truncation_psi, truncation_cutoff=truncation_cutoff, conditional_truncation=conditional_truncation)
         # img = self.synthesis(ws, latmask, dconst, **synthesis_kwargs) # !!! custom
         img = self.synthesis(ws, **synthesis_kwargs) # !!! custom
         return img
