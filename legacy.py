@@ -18,7 +18,7 @@ from torch_utils import misc
 #----------------------------------------------------------------------------
 
 # !!! custom
-def load_network_pkl(f, force_fp16=False, custom=False, **ex_kwargs):
+def load_network_pkl(f, force_fp16=False, conditional=False, custom=False, **ex_kwargs):
 # def load_network_pkl(f, force_fp16=False):
     data = _LegacyUnpickler(f).load()
     # data = pickle.load(f, encoding='latin1')
@@ -41,7 +41,7 @@ def load_network_pkl(f, force_fp16=False, custom=False, **ex_kwargs):
     else:
 # !!! custom
         if custom is True:
-            G_ema = custom_generator(data, **ex_kwargs)
+            G_ema = custom_generator(data,conditional=conditional, **ex_kwargs)
             data = dict(G_ema=G_ema)
             nets = ['G_ema']
         else:
@@ -128,7 +128,7 @@ def _populate_module_params(module, *patterns):
 #----------------------------------------------------------------------------
 
 # !!! custom
-def custom_generator(data, **ex_kwargs):
+def custom_generator(data, conditional=False, **ex_kwargs):
     from training import stylegan2_multi as networks
     try: # saved? (with new fix)
         fmap_base = data['G_ema'].synthesis.fmap_base
@@ -141,7 +141,7 @@ def custom_generator(data, **ex_kwargs):
         img_resolution  = data['G_ema'].img_resolution,
         img_channels    = data['G_ema'].img_channels,
         init_res        = [4,4], # hacky
-        mapping_kwargs  = dnnlib.EasyDict(num_layers = data['G_ema'].mapping.num_layers),
+        mapping_kwargs  = dnnlib.EasyDict(num_layers = data['G_ema'].mapping.num_layers, conditional_truncation=conditional),
         synthesis_kwargs = dnnlib.EasyDict(channel_base = fmap_base, **ex_kwargs),
     )
     G_out = networks.Generator(**kwargs).eval().requires_grad_(False)

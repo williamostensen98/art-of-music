@@ -425,7 +425,7 @@ def generate_images(
     device = torch.device('cuda')
     with dnnlib.util.open_url(network_pkl) as f:
         # G = legacy.load_network_pkl(f)['G_ema'].to(device) # type: ignore
-        G = legacy.load_network_pkl(f, custom=custom, **G_kwargs)['G_ema'].to(device) # type: ignore
+        G = legacy.load_network_pkl(f, custom=custom,conditional=conditional_truncation, **G_kwargs)['G_ema'].to(device) # type: ignore
 
     os.makedirs(outdir, exist_ok=True)
 
