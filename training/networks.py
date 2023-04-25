@@ -183,6 +183,7 @@ class MappingNetwork(torch.nn.Module):
         activation      = 'lrelu',  # Activation function: 'relu', 'lrelu', etc.
         lr_multiplier   = 0.01,     # Learning rate multiplier for the mapping layers.
         w_avg_beta      = 0.995,    # Decay for tracking the moving average of W during training, None = do not track.
+        conditional_truncation = False,
     ):
         super().__init__()
         self.z_dim = z_dim
@@ -191,6 +192,7 @@ class MappingNetwork(torch.nn.Module):
         self.num_ws = num_ws
         self.num_layers = num_layers
         self.w_avg_beta = w_avg_beta
+        self.conditional_truncation = conditional_truncation
 
         if embed_features is None:
             embed_features = w_dim
