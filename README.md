@@ -1,5 +1,8 @@
 Original repo from https://github.com/dvschultz/stylegan2-ada-pytorch
-Conditional interpolation code collected and reused from https://github.com/autonomousvision/stylegan-xl
+Conditional interpolation code reused from https://github.com/autonomousvision/stylegan-xl and https://github.com/konstantinjdobler/multi-conditional-stylegan.
+The repo also uses the conditional truncation method from https://github.com/konstantinjdobler/multi-conditional-stylegan.
+
+The Art of Music colab notebook contains the entire project from music emotion recognition to art generation. It uses this repo along with the repo for [dynamic music emotion recognition](https://github.com/williamostensen98/Dynamic_Music_Emotion_Recognition)
 
 ## Add to Colab
 
